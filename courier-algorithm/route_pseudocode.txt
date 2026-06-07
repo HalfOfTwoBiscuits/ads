@@ -1,0 +1,95 @@
+function route_driver(area_graph, starting_node, deliveries_to_make, current_time) {
+    Sort deliveries_to_make from latest timeslot to soonest;
+    driver_location = starting_node;
+    full_route = singleton list containing starting_node;
+
+    return_to_warehouse =
+        delivery with starting_node as the destination
+        and a dummy timeslot which is always after the current time;
+    Prepend return_to_warehouse to the start of deliveries_to_make;
+
+    while deliveries_to_make contains deliveries {
+
+        next_delivery = pop last element from deliveries_to_make;
+        delivery_timeslot = timeslot of next_delivery;
+        destination_node = destination of next_delivery on area_graph;
+
+        if destination_node is driver_location {
+            Continue to next iteration;
+        }
+
+        nodes_to_explore = list of all nodes in area_graph;
+        shortest_distance = hash map of each node to a very large number;
+        previous_node = hash map of each node to null;
+        shortest_distance[driver_location] = 0;
+        Remove destination_node from nodes_to_explore;
+
+        route_delivers = hash map of each delivery to false;
+        route_delivers[next_delivery] = true;
+
+        while nodes_to_explore contains nodes {
+            current_node = node in nodes_to_explore with minimum shortest_distance;
+            Remove current_node from nodes_to_explore;
+
+            for each adjacent_node to current_node on area_graph {
+                potential_distance =
+                    shortest_distance[current_node] +
+                    distance from current_node to adjacent_node on area_graph;
+                
+                potential_time =
+                    current_time +
+                    approximate time to travel potential_distance;
+                
+                if potential_time is after the end of delivery_timeslot {
+                    Add to potential_distance to account for the late delivery;
+                }
+                
+                extra_deliveries = empty list;
+                for delivery in deliveries_to_make {
+                    if
+                        destination of delivery is adjacent_node and
+                        delivery is expected at potential_time and
+                        not route_delivers[delivery] 
+                    {
+                        Add delivery to extra_deliveries;
+                        Subtract from potential_distance to account for time saved;
+                    }
+                }
+                
+
+                if potential_distance is less than shortest_distance[adjacent_node] {
+                    shortest_distance[adjacent_node] = potential_distance;
+                    previous_node[adjacent_node] = current_node;
+                    for delivery in extra_deliveries {
+                        route_delivers[delivery] = true;
+                    }
+                }
+            }
+        }
+
+        node = destination_node;
+        route_for_delivery = empty list;
+
+        until node is driver_location {
+            Prepend node to start of route_for_delivery;
+            node = previous_node[node];
+        }
+
+        for node in route_for_delivery {
+            Append node to full_route;
+        }
+
+        for delivery in deliveries_to_make {
+            if route_delivers[delivery] {
+                Remove delivery from deliveries_to_make;
+            }
+        }
+
+        driver_location = destination_node;
+        current_time =
+            current_time +
+            approximate time to travel shortest_distance[destination_node];
+    }
+
+    return full_route
+}
