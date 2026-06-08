@@ -62,13 +62,12 @@ class CourierRouter:
                 continue
 
             # Initialise distance and route data for each node.
-            nodes_to_explore = area_graph.all_nodes()
+            nodes_to_explore = self.__graph.all_nodes()
             shortest_distance = {}
             previous_node = {}
             for node in nodes_to_explore:
                 shortest_distance[node] = float("inf")
                 previous_node[node] = None
-                extra_delivery[node] = False
             shortest_distance[driver_location] = 0
 
             # The algorithm doesn't stop upon reaching the destination node, because
