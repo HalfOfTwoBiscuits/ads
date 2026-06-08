@@ -1,6 +1,6 @@
 from weighted_edge import WeightedEdge
 
-from exceptions import NodeNotFoundError
+from exceptions import NodeNotFoundError, EdgeNotFoundError
 
 class Graph:
     '''Object representing an undirected, weighted graph.
@@ -52,4 +52,21 @@ class Graph:
                 f"because {node} doesn't exist. "
                 f"Full list of nodes: {self.__nodes}"
             )
-    
+        
+    def get_weight(self, node1: str, node2: str) -> float:
+        '''Get the weight of the edge between the given two nodes.
+        If either doesn't exist, raise NodeNotFoundError.
+        If there is no edge between them, raise EdgeNotFoundError.
+        For use in unit tests.'''
+
+        edges = self.adjacent_to(node1)
+        self.adjacent_to(node2) # Result is not used. For raising an error if node2 doesn't exist.
+
+        for edge in edges:
+            if edge == node2:
+                return edge.weight
+        else:
+            raise EdgeNotFoundError(
+                f"Couldn't get weight of edge between {node1} and {node2} "
+                "because there is no edge between those two nodes."
+            )
