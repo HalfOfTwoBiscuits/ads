@@ -15,10 +15,3 @@ class ReturnToWarehouse(AbstractDestination):
         penalising routes for lateness is not necessary.'''
 
         return 0
-
-    def minutes_early(self, time: datetime) -> int:
-        '''Always returns 0. When returning to the warehouse,
-        the goal is simply to find the fastest route, so
-        penalising routes for earliness is not necessary.'''
-
-        return 0

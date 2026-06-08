@@ -45,13 +45,3 @@ class Delivery(AbstractDestination):
         lateness = time - self.__timeslot_end
         minutes_late = lateness.total_seconds() // 60
         return max(0, minutes_late)
-
-    def minutes_early(self, time: datetime) -> int:
-        '''Returns the number of minutes early the delivery would be
-        if it arrived at the provided datetime.
-        
-        If the delivery would be on time or late, the return value is 0.'''
-
-        earliness = self.__timeslot_start - time
-        minutes_early = earliness.total_seconds() // 60
-        return max(0, minutes_early)

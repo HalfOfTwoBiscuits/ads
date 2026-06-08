@@ -25,9 +25,3 @@ class AbstractDestination(ABC):
         '''Returns the number of minutes late the driver would be
         they arrived at the provided datetime.'''
         ...
-
-    @abstractmethod
-    def minutes_early(self, time: datetime) -> int:
-        '''Returns the number of minutes early the driver would be
-        they arrived at the provided datetime.'''
-        ...
