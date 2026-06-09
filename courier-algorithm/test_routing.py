@@ -113,14 +113,13 @@ class TestRouting:
         # Timeslot-order route: A -> E via C -> D, back to C via E.
         # Optimal route: E -> D -> A, back to C.
 
-        # To ensure the deliveries would be late, an arbitrary traversal time is used.
-        arbitrary_traversal_duration = time_util.time_to_traverse("A", "D")
-
+        # To ensure the deliveries would be late, a short traveral time is used.
+        arbitrary_traversal_duration = time_util.time_to_traverse("C", "E")
         delivery_time = now + arbitrary_traversal_duration
 
         delivery_e_duration = arbitrary_traversal_duration + timedelta(minutes=1)
-        delivery_d_duration = arbitrary_traversal_duration
-        delivery_a_duration = arbitrary_traversal_duration + timedelta(minutes=2)
+        delivery_d_duration = arbitrary_traversal_duration + timedelta(minutes=2)
+        delivery_a_duration = arbitrary_traversal_duration
 
         deliveries = [
             Delivery("E", delivery_time, delivery_e_duration),
