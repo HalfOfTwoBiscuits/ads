@@ -40,6 +40,7 @@ class CourierRouter:
         # the end of a list is more efficient.
         # The end of the timeslot is used, rather than the beginning,
         # to prioritise deliveries whose slots will be over soon.
+        assert type(deliveries_to_make) == list and type(deliveries_to_make[0]) == Delivery
         deliveries_to_make.sort(key=self.sort_key_for_deliveries, reverse=True)
 
         driver_location = starting_node
@@ -62,7 +63,7 @@ class CourierRouter:
                 continue
 
             # Initialise distance and route data for each node.
-            nodes_to_explore = self.__graph.all_nodes()
+            nodes_to_explore = self.__graph.all_nodes
             shortest_distance = {}
             previous_node = {}
             for node in nodes_to_explore:
@@ -95,13 +96,13 @@ class CourierRouter:
                     # If the delivery is late, penalise the route
                     # as if the driver travelled for the time it is late by,
                     # multiplied by a severity factor.
-                    potential_distance += self.__late_delivery_penalty(delivery)
+                    potential_distance += self.__late_delivery_penalty(next_delivery, current_time)
                     
                     # Identify any extra deliveries possible to make at this node.
                     extra_deliveries = []
                     for delivery in deliveries_to_make:
                         if delivery.destination_node == edge.node \
-                            and delivery.delivery_expected(current_time, self.__enroute_delivery_mins_early_leeway) \
+                            and delivery.expected_at(current_time, self.__enroute_delivery_mins_early_leeway) \
                             and not route_delivers[delivery]:
 
                             extra_deliveries.append(delivery)
@@ -165,14 +166,14 @@ class CourierRouter:
         average_distance_away = fmean(neighbours_distances_away)
         return average_distance_away * self.__enroute_delivery_benefit
 
-    def __late_delivery_penalty(self, delivery: Delivery) -> float:
+    def __late_delivery_penalty(self, delivery: Delivery, current_time: datetime) -> float:
         '''Amount added to the total distance to penalise for a late delivery.
         The distance that could be travelled in the number of minutes which
         the delivery is late by, multiplied by a severity factor.
         
         If the delivery is early or on time, the return value will be 0.0.'''
 
-        minutes_late = delivery.minutes_late()
+        minutes_late = delivery.minutes_late(current_time)
         if minutes_late > 0:
             return TimeUtility.distance_travelled_in(minutes_late) * self.__lateness_severity
         return 0.0

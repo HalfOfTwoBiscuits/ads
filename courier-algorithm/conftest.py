@@ -31,8 +31,8 @@ def enroute_benefit() -> float:
     return 2.0
 
 @fixture
-def enroute_mins_early_leeway() -> timedelta:
-    return timedelta(minutes=5)
+def enroute_mins_early_leeway() -> int:
+    return 5
 
 @fixture
 def router(graph: Graph, lateness_severity: float, enroute_benefit: float, enroute_mins_early_leeway: timedelta) -> CourierRouter:

@@ -19,8 +19,8 @@ class TestRouting:
         delivery_2_time = time_util.timestamp_after_traversing("B", "D", delivery_1_time)
         delivery_3_time = time_util.timestamp_after_traversing("D", "E", delivery_2_time)
         
-        delivery1 = Delivery("B", delivery_1_time, arbitrary_duration),
-        delivery2 = Delivery("D", delivery_2_time, arbitrary_duration),
+        delivery1 = Delivery("B", delivery_1_time, arbitrary_duration)
+        delivery2 = Delivery("D", delivery_2_time, arbitrary_duration)
         delivery3 = Delivery("E", delivery_3_time, arbitrary_duration)
 
         route = router.route_driver("A", [delivery1, delivery2, delivery3], now)
@@ -60,8 +60,8 @@ class TestRouting:
         # Timeslot-order route: C -> D via E -> B, back to A
         # Optimal, shortest route: C -> B -> D, back to A
         delivery_c_time = time_util.timestamp_after_traversing("A", "C", now)
-        delivery_b_time = time_util.timestamp_after_traversing("B", "C", delivery_1_time)
-        delivery_d_time = delivery_2_time - timedelta(minutes=1)
+        delivery_b_time = time_util.timestamp_after_traversing("B", "C", delivery_c_time)
+        delivery_d_time = delivery_b_time - timedelta(minutes=1)
 
         # Duration for delivery_c makes it late unless it's delivered first,
         # duration for delivery_b and d means they won't be late regardless of whether the detour is taken.
@@ -70,7 +70,7 @@ class TestRouting:
             time_util.time_to_traverse("E", "D") + time_util.time_to_traverse("D", "B")
         delivery_d_duration = max(
             time_util.time_to_traverse("B", "D"), 
-            time_util.time_to_traverse("C", "E") + time_util.time_to_traverse("C", "D")
+            time_util.time_to_traverse("C", "E") + time_util.time_to_traverse("E", "D")
         )
 
         deliveries = [

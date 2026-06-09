@@ -30,4 +30,4 @@ class UnitTestTimeUtility:
         Doesn't pathfind between non-adjacent nodes.
         Intended for unit tests.'''
 
-        return self.travel_time_for(self.__graph.get_weight(node1, node2))
+        return TimeUtility.travel_time_for(self.__graph.get_weight(node1, node2))

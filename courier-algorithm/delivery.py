@@ -34,7 +34,7 @@ class Delivery(AbstractDestination):
         is at the location and the delivery slot has started, they should make the delivery
         - if they leave without doing that, the delivery will only get later.'''
 
-        return time >= self.__timeslot_start - timedelta(mins=leeway_mins)
+        return time >= self.__timeslot_start - timedelta(minutes=leeway_mins)
 
     def minutes_late(self, time: datetime) -> int:
         '''Returns the number of minutes late the delivery would be

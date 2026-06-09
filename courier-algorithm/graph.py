@@ -35,7 +35,7 @@ class Graph:
     def all_nodes(self) -> list[str]:
         '''Returns a list of all nodes.'''
 
-        return self.__nodes
+        return self.__nodes.copy()
 
     def adjacent_to(self, node: str) -> list[WeightedEdge]:
         '''Returns a list of WeightedEdge objects for the
@@ -45,7 +45,7 @@ class Graph:
         the `node` and `weight` properties of the WeightedEdge.'''
 
         try:
-            return self._adjacency[node]
+            return self.__adjacency[node]
         except KeyError:
             raise NodeNotFoundError(
                 f"Couldn't get nodes adjacent to {node} "
@@ -63,7 +63,7 @@ class Graph:
         self.adjacent_to(node2) # Result is not used. For raising an error if node2 doesn't exist.
 
         for edge in edges:
-            if edge == node2:
+            if edge.node == node2:
                 return edge.weight
         else:
             raise EdgeNotFoundError(
