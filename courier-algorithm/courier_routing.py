@@ -136,6 +136,9 @@ class CourierRouter:
                         f"Delivery destination at {next_delivery.destination_node} " 
                         f"is unreachable from driver location {driver_location}."
                     )
+
+            # Remove extra deliveries from list.
+            deliveries_to_make = [delivery for delivery in deliveries_to_make if not route_delivers[delivery]]
             
             # Add route for this delivery to the driver's full route.
             full_route += route_for_delivery
