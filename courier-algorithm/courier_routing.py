@@ -56,6 +56,8 @@ class CourierRouter:
         # Repeat until all deliveries have been addressed.
         while deliveries_to_make:
             next_delivery = deliveries_to_make.pop()
+            #print("Delivering " + next_delivery.destination_node)
+
 
             # If the driver is already at the destination,
             # no pathfinding is needed.
@@ -86,9 +88,12 @@ class CourierRouter:
                 # Find node with the shortest distance from start.
                 current_node = min(nodes_to_explore, key=shortest_distance.__getitem__)
                 nodes_to_explore.remove(current_node)
+                #print ("Exploring from " + current_node)
 
                 # Iterate through adjacent nodes.
                 for edge in self.__graph.adjacent_to(current_node):
+
+                    #print ("Exploring to " + edge.node)
                     # Get potential distance to reach the node, and time taken.
                     potential_distance = shortest_distance[current_node] + edge.weight
                     potential_time = current_time + TimeUtility.travel_time_for(potential_distance)
@@ -112,16 +117,31 @@ class CourierRouter:
                             # multiplied by an benefit factor.
                             potential_distance -= self.__extra_delivery_bonus(delivery)
 
+                            #print("Extra delivery possible at " + delivery.destination_node)
+
                     # If this is the best route found so far, store it.
                     if potential_distance < shortest_distance[edge.node]:
+
+                        # Explicitly forbid routes that go back on themselves.
+                        # Such a route could be generated if an extra delivery is made
+                        # after leaving a node, then a new path to the node is tried shortly afterwards,
+                        # so the bonus from the extra delivery negates the distance travelled by going back on oneself.
+                        prev = previous_node[current_node]
+                        while prev != edge.node and prev != None: prev = previous_node[prev]
+                        if prev == edge.node: continue
+
+                        #print ("Found route to " + edge.node + " through " + current_node)
                         shortest_distance[edge.node] = potential_distance
                         previous_node[edge.node] = current_node
                         for delivery in extra_deliveries:
                             route_delivers[delivery] = True
+                            #print("Route makes extra delivery at " + delivery.destination_node)
 
             # Derive best route for the delivery.
             node = next_delivery.destination_node
             route_for_delivery = []
+
+            #print ("Path for this destination: ", previous_node)
 
             # Starting from the destination, repeatedly insert the
             # previous node at the beginning of the list until the start is reached.
